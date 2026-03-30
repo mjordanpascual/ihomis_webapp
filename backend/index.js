@@ -38,12 +38,24 @@ app.get('/', async (req, res) => {
 app.get('/users', async (req, res) => {
   try {
     // Execute the SQL query using await
-    const [rows, fields] = await db.query('SELECT * FROM hpersonal WHERE lastname = "PASCUAL" ');
-    
+    //const [rows, fields] = await db.query('SELECT * FROM hpersonal WHERE lastname = "PASCUAL" ');
+    const [rows, fields] = await db.query('SELECT COUNT(*)as Total FROM hperson;');
+
     // Send the fetched data as a JSON response
     res.status(200).json(rows);
   } catch (err) {
     console.error(err);
+    res.status(500).send('Server error');
+  }
+});
+
+app.get('/erlog', async (req, res) => {
+  try {
+    //const [rows, fields] = await db.query('SELECT  * FROM hperson');
+    const [rows, fields] = await db.query('SELECT  * FROM hperson');
+    res.status(200).json(rows);
+  } catch (error) {
+    console.error(error);
     res.status(500).send('Server error');
   }
 });
