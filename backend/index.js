@@ -38,8 +38,9 @@ app.get('/', async (req, res) => {
 app.get('/users', async (req, res) => {
   try {
     // Execute the SQL query using await
-    const [rows, fields] = await db.query('SELECT * FROM hpersonal WHERE lastname = "PASCUAL" ');
-    
+    //const [rows, fields] = await db.query('SELECT * FROM hpersonal WHERE lastname = "PASCUAL" ');
+    const [rows, fields] = await db.query('SELECT COUNT(*) FROM hperson;');
+
     // Send the fetched data as a JSON response
     res.status(200).json(rows);
   } catch (err) {
