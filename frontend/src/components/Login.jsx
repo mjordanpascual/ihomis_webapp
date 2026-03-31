@@ -3,7 +3,6 @@ import ospar1Logo from '../assets/ospar1logo.png'
 import nursesdoctor from '../assets/nursesdoctor.png'
 import loginscreen from '../assets/loginscreen.jpg'
 
-
 const Login = () => {
 
   const [loading, setLoading] = useState(false);
@@ -14,8 +13,12 @@ const Login = () => {
     
   }
 
+  const handleContextMenu = (e) => {
+  e.preventDefault(); // Prevents the default right-click menu
+  };
+
   return (
-    <div className='flex justify-center items-center w-full h-screen py-12 px-4 sm:px-6 lg:px-8'>
+    <div onContextMenu={handleContextMenu} className='flex justify-center items-center w-full h-screen py-12 px-4 sm:px-6 lg:px-8'>
         {/* <img src={loginscreen} alt="Login Screen" className='absolute w-auto object-cover' /> */}
         <div className='max-w-md w-full space-y-8'>
             <div className="text-center">
@@ -61,7 +64,7 @@ const Login = () => {
                 </form>
             </div>
             
-        <p className='text-center text-xs text-gray-500 font-semibold'>Developed by: IT-DEPARTMENT</p>
+        <p onContextMenu={handleContextMenu} className='text-center text-xs text-gray-300 font-semibold select-none'>Developed by: IT-DEPARTMENT</p>
         </div>
     </div>
   )
