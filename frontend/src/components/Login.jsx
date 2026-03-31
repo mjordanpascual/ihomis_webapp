@@ -3,15 +3,41 @@ import ospar1Logo from '../assets/ospar1logo.png'
 import nursesdoctor from '../assets/nursesdoctor.png'
 import loginscreen from '../assets/loginscreen.jpg'
 
+import axios from "axios";
+
 const Login = () => {
 
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e) => {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+
+  // const handleSubmit = (e) => {
+  //   e.preventDefault();
+  //   setLoading(true);
+  // }
+
+    const handleLogin = async (e) => {
     e.preventDefault();
-    setLoading(true);
-    
-  }
+
+    try {
+      const res = await axios.post("http://localhost:5000/login", {
+        username,
+        password,
+      });
+
+      alert(res.data.message);
+
+      // Save token
+      localStorage.setItem("token", res.data.token);
+
+      // redirect
+      window.location.href = "/departments";
+
+    } catch (err) {
+      alert(err.response?.data?.message || "Login failed");
+    }
+  };
 
   const handleContextMenu = (e) => {
   e.preventDefault(); // Prevents the default right-click menu
@@ -30,7 +56,7 @@ const Login = () => {
                   Hospital Information Management System
                 </p>
                 <form className='mt-6 max-w-md mx-auto space-y-6'
-                onSubmit={handleSubmit}>
+                onSubmit={handleLogin}>
                     <div>
                       <div>
                         <label htmlFor='username' className="sr-only">Username</label>
