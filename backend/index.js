@@ -16,7 +16,7 @@ app.use(express.urlencoded({ extended: true }));
 // JWT Secret
 // const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret';
 
-app.use('/api', usersRoutes);
+app.use('/', usersRoutes);
 
 app.get("/", (req, res) => {
   res.send("API is working");
