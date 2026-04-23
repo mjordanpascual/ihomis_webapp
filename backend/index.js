@@ -1,26 +1,46 @@
 const express = require('express');
+const cors = require('cors');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const pool = require('./config/database');
+const db = require('./config/database');
 require('dotenv').config();
+const patientsRoutes = require('./routes/patientsRoutes');
+const helpcardRoutes = require('./routes/helpCardRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
 const usersRoutes = require('./routes/usersRoutes');
 
+const verifyToken = require('./middleware/verifyToken');
+const isAdmin = require('./middleware/isAdmin');
+
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
+app.use(cors());
 // JWT Secret
 // const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret';
 
 app.use('/', usersRoutes);
+app.use('/api', patientsRoutes);
+app.use('/helpcard', helpcardRoutes);
 
-app.get("/", (req, res) => {
-  res.send("API is working");
+app.get('/api/admin', verifyToken, isAdmin, (req, res) => {
+  res.json({ message: 'Admin access granted' });
 });
+
+app.get('/api/admin', verifyToken, isAdmin, (req, res) => {
+  res.json({
+    message: 'Welcome Admin',
+    user: req.user,
+    data: ['User List', 'Reports', 'System Settings']
+  });
+});
+
+// app.get("/", (req, res) => {
+//   res.send("API is working");
+// });
 
 app.get("/test", (req, res) => {
   res.send("OK");

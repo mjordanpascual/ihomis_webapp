@@ -66,8 +66,15 @@ const registerUser = async (req, res) => {
 const loginUser = async (req, res) => {
     const { username, password } = req.body;
 
+        // 1. Validate input fields
+        if(!username || !password){
+            return res.status(400).json({
+                message: 'Username and password are required'
+            });
+        }
+
     try {
-        // Check if user exists
+        // 2. Check if user exists
         const query = 'SELECT * FROM web_useraccount WHERE username = ?';
         const [rows] = await db.execute(query, [username]);
 
@@ -83,15 +90,46 @@ const loginUser = async (req, res) => {
             return res.status(401).json({  error: 'Invalid credentials'});
         }
 
-        // Generate JWT
-        const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+        if(user.is_active === 0){
+            return res.status(403).json({
+                message: 'Account is inactive. Please contact your IT administrator.'
+            });
+        }
 
-        res.json({ message: 'Login sucessful', token });
+        // backend middleware
+        // if (req.user.role !== 'admin') {
+        // return res.status(403).json({ message: 'Access denied' });
+        // }
+
+        // 3. Generate JWT
+        const token = jwt.sign(
+        {
+            user_id: user.user_id,
+            username: user.username,
+            role: user.role,
+            department: user.department
+        },
+        process.env.JWT_SECRET,
+        {
+            expiresIn: process.env.JWT_EXPIRES_IN
+        }
+        );
+
+        // 4. Update last login
+        const updateSql = "UPDATE web_useraccount SET last_login = NOW() WHERE user_id = ?";
+        db.execute(updateSql, [user.user_id]);
+
+        res.json({ message: 'Login sucessful', token: token, user: {
+                    user_id: user.user_id,
+                    username: user.username,
+                    role: user.role,
+                    department: user.department
+        }
+        });
     } catch (error) {
         res.status(500).json({ error: 'Failed to login user' });
     }
 
 };
-
 
 module.exports = { registerUser, loginUser }
